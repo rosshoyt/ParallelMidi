@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="s1HbLJ" name="Final-Project-ParAlgDev" projectType="consoleapp"
+              jucerVersion="5.4.7">
+  <MAINGROUP id="KTKNKD" name="Final-Project-ParAlgDev">
+    <GROUP id="{628D24C3-3131-6140-D798-75281A569364}" name="Source">
+      <FILE id="jtzVih" name="book1-prelude01.mid" compile="0" resource="0"
+            file="../Parallel-Computing-SP2020/final-project/Source/book1-prelude01.mid"/>
+      <FILE id="UoaPM8" name="GeneralScanRecursive.h" compile="0" resource="0"
+            file="Source/GeneralScanRecursive.h"/>
+      <FILE id="ZaQKo2" name="GeneralScanSchwartz.h" compile="0" resource="0"
+            file="Source/GeneralScanSchwartz.h"/>
+      <FILE id="Jc01LG" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
+    </GROUP>
+  </MAINGROUP>
+  <EXPORTFORMATS>
+    <XCODE_MAC targetFolder="Builds/MacOSX">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug"/>
+        <CONFIGURATION isDebug="0" name="Release"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_audio_basics" path="../../../../../../Program Files/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../../../../../Program Files/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../../../../../Program Files/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../../../../../Program Files/JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="../../../../../../Program Files/JUCE/modules"/>
+        <MODULEPATH id="juce_cryptography" path="../../../../../../Program Files/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../../../../../Program Files/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../../../../../Program Files/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../../../../../Program Files/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../../../../../Program Files/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../../../../../Program Files/JUCE/modules"/>
+        <MODULEPATH id="juce_opengl" path="../../../../../../Program Files/JUCE/modules"/>
+      </MODULEPATHS>
+    </XCODE_MAC>
+    <VS2019 targetFolder="Builds/VisualStudio2019">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug"/>
+        <CONFIGURATION isDebug="0" name="Release"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_audio_basics" path="../../../../../../Program Files/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../../../../../Program Files/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../../../../../Program Files/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../../../../../Program Files/JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="../../../../../../Program Files/JUCE/modules"/>
+        <MODULEPATH id="juce_cryptography" path="../../../../../../Program Files/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../../../../../Program Files/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../../../../../Program Files/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../../../../../Program Files/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../../../../../Program Files/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../../../../../Program Files/JUCE/modules"/>
+        <MODULEPATH id="juce_opengl" path="../../../../../../Program Files/JUCE/modules"/>
+      </MODULEPATHS>
+    </VS2019>
+  </EXPORTFORMATS>
+  <MODULES>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_cryptography" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_opengl" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+  </MODULES>
+  <LIVE_SETTINGS>
+    <WINDOWS/>
+  </LIVE_SETTINGS>
+  <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1"/>
+</JUCERPROJECT>
