@@ -443,19 +443,19 @@ bool test_histo() {
     return true;
 }
 
-int main() {
-    using namespace std;
-    if (!test_histo())
-        cout << "test_histo failed" << endl;
-    if (!test_low_ten())
-        cout << "test_low_ten failed" << endl;
-    if (!test_avg_low_ten())
-        cout << "test_avg_low_ten failed" << endl;
-    if (!test_max_scan())
-        cout << "test_max_scan failed" << endl;
-    if (!test_exam1())
-        cout << "test_exam1 failed" << endl;
-    if (!test_hw2())
-        cout << "test_hw2 failed" << endl;
-    return 0;
-}
+//int main() {
+//    using namespace std;
+//    if (!test_histo())
+//        cout << "test_histo failed" << endl;
+//    if (!test_low_ten())
+//        cout << "test_low_ten failed" << endl;
+//    if (!test_avg_low_ten())
+//        cout << "test_avg_low_ten failed" << endl;
+//    if (!test_max_scan())
+//        cout << "test_max_scan failed" << endl;
+//    if (!test_exam1())
+//        cout << "test_exam1 failed" << endl;
+//    if (!test_hw2())
+//        cout << "test_hw2 failed" << endl;
+//    return 0;
+//}
