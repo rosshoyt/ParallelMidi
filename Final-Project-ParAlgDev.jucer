@@ -16,6 +16,7 @@
       <FILE id="jtzVih" name="book1-prelude01.mid" compile="0" resource="0"
             file="../Parallel-Computing-SP2020/final-project/Source/book1-prelude01.mid"/>
       <FILE id="Jc01LG" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
+      <FILE id="njzCvX" name="NoteHistoScan.h" compile="0" resource="0" file="Source/NoteHistoScan.h"/>
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>
