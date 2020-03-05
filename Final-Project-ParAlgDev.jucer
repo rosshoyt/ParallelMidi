@@ -4,12 +4,17 @@
               jucerVersion="5.4.7">
   <MAINGROUP id="KTKNKD" name="Final-Project-ParAlgDev">
     <GROUP id="{628D24C3-3131-6140-D798-75281A569364}" name="Source">
+      <GROUP id="{32BBE20E-5713-E96A-77AB-83D29C7C7E45}" name="GeneralScan">
+        <FILE id="ZaQKo2" name="GeneralScanSchwartz.h" compile="0" resource="0"
+              file="Source/GeneralScanSchwartz.h"/>
+        <FILE id="UoaPM8" name="GeneralScanRecursive.h" compile="0" resource="0"
+              file="Source/GeneralScanRecursive.h"/>
+        <FILE id="U8qGIG" name="generalscan_examples.cpp" compile="1" resource="0"
+              file="Source/generalscan_examples.cpp"/>
+        <FILE id="VAHStb" name="GeneralScan.h" compile="0" resource="0" file="Source/GeneralScan.h"/>
+      </GROUP>
       <FILE id="jtzVih" name="book1-prelude01.mid" compile="0" resource="0"
             file="../Parallel-Computing-SP2020/final-project/Source/book1-prelude01.mid"/>
-      <FILE id="UoaPM8" name="GeneralScanRecursive.h" compile="0" resource="0"
-            file="Source/GeneralScanRecursive.h"/>
-      <FILE id="ZaQKo2" name="GeneralScanSchwartz.h" compile="0" resource="0"
-            file="Source/GeneralScanSchwartz.h"/>
       <FILE id="Jc01LG" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
     </GROUP>
   </MAINGROUP>
