@@ -4,6 +4,7 @@
               jucerVersion="5.4.7">
   <MAINGROUP id="KTKNKD" name="Final-Project-ParAlgDev">
     <GROUP id="{628D24C3-3131-6140-D798-75281A569364}" name="Source">
+      <FILE id="o7uPn1" name="FileUtils.h" compile="0" resource="0" file="Source/FileUtils.h"/>
       <GROUP id="{32BBE20E-5713-E96A-77AB-83D29C7C7E45}" name="GeneralScan">
         <FILE id="ZaQKo2" name="GeneralScanSchwartz.h" compile="0" resource="0"
               file="Source/GeneralScanSchwartz.h"/>
