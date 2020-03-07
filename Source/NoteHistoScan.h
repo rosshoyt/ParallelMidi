@@ -10,27 +10,31 @@
 
 #include "GeneralScan.h"
 
+//class NoteScan : public GeneralScan<double, NoteHisto> {
+//        
+//};
+
 /**
  * @class Histo for the NoteHistoScan reductions -- buckets data into 10 interior ranges
  *              plus two outlier ranges
  */
 struct NoteHisto {
-    static const int N = 10;
-    int bucket[N + 2];
+    static const int N = 128;
+    int bucket[N];
     int hi, lo;
     
     NoteHisto() : hi(100), lo(0) {
-        for (int i = 0; i < N + 2; i++)
+        for (int i = 0; i < N; i++)
             bucket[i] = 0;
     }
 };
 
-std::ostream &operator<<(std::ostream &out, const NoteHisto &noteHisto) {
-    out << "|";
-    for (int count: noteHisto.bucket)
-        out << count << "|";
-    return out;
-}
+//std::ostream &operator<<(std::ostream &out, const NoteHisto &noteHisto) {
+//    //out << "|";
+//    //for (int count: noteHisto.bucket)
+//    //    out << count << "|";
+//    return out;
+//}
 
 /**
  * Collects a histogram from data.

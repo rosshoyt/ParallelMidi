@@ -35,17 +35,18 @@ static String getProjectFullPath(const char * jucerFilename, bool debug = false)
  * Method that reads a midi file from the provided full path.
  * @throws std::exception if file doesn't exist or MIDI file could not be read
  */
-static MidiFile readInMidiFile(const String& relativePath)
+static MidiFile readInMidiFile(const String& path)
 {
-    File fileToRead(relativePath);
+    File fileToRead(path);
     if (fileToRead.existsAsFile())
     {
-        MidiFile midiFile;
         if (std::unique_ptr<FileInputStream> inputStream{ fileToRead.createInputStream() })
         {
-            if (midiFile.readFrom(*inputStream.get()))
-                return midiFile;
+            MidiFile midiFile;
+            // read midi file and create matching note off messages (if not provided in file)
+            if (midiFile.readFrom(*inputStream.get()), true) return midiFile;
         }
+        throw "Error reading file";
     }
-    throw new std::exception;  // file doesn't exist
+    throw "File doesn't exist at provided path: " + path; 
 }
