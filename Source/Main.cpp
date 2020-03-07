@@ -18,14 +18,14 @@ typedef struct Note {
     }
 };
 //=============================================================================
-
+typedef std::multimap<double, Note> NoteMap;
 /**
  * Method that reads the NoteOn messages in a midi file into a single list
+ * @return notes in midi File
  */
-std::list<Note> getNoteList(MidiFile& midiFile, bool debug = false) {
-    
+NoteMap getNoteMap(MidiFile& midiFile, bool debug = false) {
     midiFile.convertTimestampTicksToSeconds();
-    std::list<Note> data; // list to store note events from all tracks
+    NoteMap data;
     // Read tracks
     for (int t = 0; t < midiFile.getNumTracks(); ++t) {
         if (debug) DBG("Scanning track #" + std::to_string(t));
@@ -35,7 +35,7 @@ std::list<Note> getNoteList(MidiFile& midiFile, bool debug = false) {
             MidiMessage * midiMessage = &track.getEventPointer(i)->message;
             if (midiMessage->isNoteOn()) {
                 MidiMessage* noteOff = &track.getEventPointer(track.getIndexOfMatchingKeyUp(i))->message;
-                data.push_back(Note(midiMessage, noteOff));
+                data.insert( { midiMessage->getTimeStamp(), Note(midiMessage, noteOff) } );
                 if (debug) DBG(midiMessage->getDescription() + ", " + noteOff->getDescription());
             }
         }
@@ -43,21 +43,17 @@ std::list<Note> getNoteList(MidiFile& midiFile, bool debug = false) {
     return data;
 }
 
-
 //std::list<NoteHisto> sortNoteList(std::list<Note> noteList) {}
 
 int main (int argc, char* argv[])
 {
     auto fullPath = getProjectFullPath(PROJECT_JUCER_FILENAME_FLAG) + MIDI_FILE_REL_PATH;
     try{
-        auto data = getNoteList(readInMidiFile(fullPath), true);
+        auto data = getNoteMap(readInMidiFile(fullPath), true);
         // TODO Sequential scan of data
         // ...
 
-        for (auto noteOn : data) {
-            
-        }
-        
+        for (auto noteOn : data) {}
 
     } catch(...){
         DBG("MIDI File was not read");
