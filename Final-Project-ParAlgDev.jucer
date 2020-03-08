@@ -4,11 +4,15 @@
               jucerVersion="5.4.7">
   <MAINGROUP id="KTKNKD" name="Final-Project-ParAlgDev">
     <GROUP id="{628D24C3-3131-6140-D798-75281A569364}" name="Source">
+      <GROUP id="{6D35071C-B68A-78A3-7CFF-D350341DE648}" name="Utils">
+        <FILE id="o7uPn1" name="FileUtils.h" compile="0" resource="0" file="Source/FileUtils.h"/>
+        <FILE id="hYrDZI" name="MidiUtils.h" compile="0" resource="0" file="Source/MidiUtils.h"/>
+      </GROUP>
       <GROUP id="{0D6F215C-D32D-360E-C512-C7FE422DE8E0}" name="GUI">
         <FILE id="YRRqkk" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
+        <FILE id="D5hcns" name="NoteMapComponent.h" compile="0" resource="0"
+              file="Source/NoteMapComponent.h"/>
       </GROUP>
-      <FILE id="o7uPn1" name="FileUtils.h" compile="0" resource="0" file="Source/FileUtils.h"/>
-      <FILE id="hYrDZI" name="MidiUtils.h" compile="0" resource="0" file="Source/MidiUtils.h"/>
       <GROUP id="{32BBE20E-5713-E96A-77AB-83D29C7C7E45}" name="GeneralScan">
         <FILE id="ZaQKo2" name="GeneralScanSchwartz.h" compile="0" resource="0"
               file="Source/GeneralScanSchwartz.h"/>

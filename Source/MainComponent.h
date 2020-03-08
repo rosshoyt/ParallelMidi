@@ -12,6 +12,7 @@
 #include <JuceHeader.h>
 #include "FileUtils.h"
 #include "MidiUtils.h"
+#include "NoteMapComponent.h"
 
 const char * MIDI_FILE_REL_PATH = "/source/book1-prelude01.mid";
 const char * PROJECT_JUCER_FILENAME_FLAG = "Final-Project-ParAlgDev.jucer";
@@ -22,46 +23,31 @@ const char * PROJECT_JUCER_FILENAME_FLAG = "Final-Project-ParAlgDev.jucer";
 class MainComponent    : public Component
 {
 public:
-    MainComponent()
+    MainComponent() : noteMapComponent()
     {
         // In your constructor, you should add any child components, and
         // initialise any special settings that your component needs.
+        NoteMap noteMap;
         try {
             noteMap = getNoteMap(readInMidiFile(getProjectFullPath(PROJECT_JUCER_FILENAME_FLAG) + MIDI_FILE_REL_PATH), true);
         }
         catch (...) {
             DBG("Problem reading file");
         }
+        
+        noteMapComponent.setNoteMap(noteMap);
+        addAndMakeVisible(noteMapComponent);
         setSize(600, 400);
+        noteMapComponent.animate();
     }
-    //MidiFile readTestMidiFile(String path) 
-    //{
-    //   return readInMidiFile(getProjectFullPath(PROJECT_JUCER_FILENAME_FLAG) + MIDI_FILE_REL_PATH);
-    //}
 
-    //NoteMap getNoteMapFromMidiFile(MidiFile midiFile) 
-    //{
-    //    NoteMap nm;
-    //    
-    //    try {
-    //        nm = getNoteMap(midiFile, true);
-    //    }
-    //    catch (...) {
-    //        DBG("MIDI File was not read");
-    //    }
-    //}
     ~MainComponent()
     {
     }
 
     void paint (Graphics& g) override
     {
-        /* This demo code just fills the component's background and
-           draws some placeholder text to get you started.
 
-           You should replace everything in this method with your own
-           drawing code..
-        */
 
         g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));   // clear the background
 
@@ -83,6 +69,7 @@ public:
 
 private:
 
-    NoteMap noteMap;
+    NoteMapComponent noteMapComponent;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };
