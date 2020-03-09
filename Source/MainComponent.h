@@ -19,30 +19,34 @@ const char * PROJECT_JUCER_FILENAME_FLAG = "Final-Project-ParAlgDev.jucer";
 
 //==============================================================================
 /*
+* Main Application Window component.
+* Manages sub-components and executes main program MidiFile Scan logic
 */
 class MainComponent    : public Component
 {
 public:
+    /**
+     * Constructor which adds child components, intiates settings & runs main application logic
+     */ 
     MainComponent() : noteMapComponent()
     {
-        // In your constructor, you should add any child components, and
-        // initialise any special settings that your component needs.
-        NoteMap noteMap;
+        
+        HeatmapList * heatMaps;
         try {
-            noteMap = getNoteMap(readInMidiFile(getProjectFullPath(PROJECT_JUCER_FILENAME_FLAG) + MIDI_FILE_REL_PATH), true);
-        }
-        catch (...) {
+            heatMaps = scanNoteMap(getNoteMap(readInMidiFile(getProjectFullPath(PROJECT_JUCER_FILENAME_FLAG) + MIDI_FILE_REL_PATH)));
+        } catch (...) {
             DBG("Problem reading file");
         }
         
-        noteMapComponent.setNoteMap(noteMap);
         addAndMakeVisible(noteMapComponent);
         setSize(600, 400);
+        noteMapComponent.setNoteHeatMap(heatMaps);
         noteMapComponent.animate();
     }
 
     ~MainComponent()
     {
+        
     }
 
     void paint (Graphics& g) override
@@ -59,12 +63,12 @@ public:
         g.drawText ("MainComponent", getLocalBounds(),
                     Justification::centred, true);   // draw some placeholder text
     }
-
+    /**
+     * Method that sets the bounds of child components this component contains.
+     */
     void resized() override
     {
-        // This method is where you should set the bounds of any child
-        // components that your component contains..
-
+        noteMapComponent.setBounds(getBounds());
     }
 
 private:
