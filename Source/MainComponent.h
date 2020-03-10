@@ -34,6 +34,7 @@ public:
         HeatmapList * heatMaps;
         try {
             auto midiFile = readInMidiFile(getProjectFullPath(PROJECT_JUCER_FILENAME_FLAG) + MIDI_FILE_REL_PATH);
+
             auto noteMap = getNoteMap(midiFile);
             heatMaps = scanNoteMap(noteMap);
                                    
