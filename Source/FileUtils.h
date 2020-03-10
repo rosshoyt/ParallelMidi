@@ -45,7 +45,7 @@ static MidiFile readInMidiFile(const String& path)
         {
             MidiFile midiFile;
             // read midi file and create matching note off messages (if not provided in file)
-            if (midiFile.readFrom(*inputStream.get()), true) return midiFile;
+            if (midiFile.readFrom(*inputStream.get(), true)) return midiFile;
         }
         throw "Error reading file";
     }

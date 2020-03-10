@@ -13,6 +13,7 @@
 #include <JuceHeader.h>
 #include <iterator>
 #include <algorithm>
+#include <list>
 #include "FileUtils.h"
 #include "NoteHistoScan.h"
 
@@ -54,7 +55,7 @@ typedef std::list<HeatmapFrame> HeatmapList;
  * Reads the NoteOn messages from a midi file into a single list
  * @return notes in midi File
  */
-static const NoteMultiMap getNoteMap(MidiFile& midiFile) 
+static NoteMultiMap getNoteMap(MidiFile& midiFile)
 {
     midiFile.convertTimestampTicksToSeconds();
     NoteMultiMap data;
@@ -94,7 +95,7 @@ static std::list<Note> getNotesAtTimeStamp(double timestamp, const NoteMultiMap&
  * Creates a NoteHeatMap from a NoteMap.
  * TODO assumes MidiFile doesn't start with a NoteOff
  */
-static HeatmapList * scanNoteMap(const NoteMultiMap & inputNoteMap)
+static HeatmapList * scanNoteMap(NoteMultiMap & inputNoteMap)
 {
     HeatmapList * noteHeatMap;
     

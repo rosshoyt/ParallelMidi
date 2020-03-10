@@ -33,7 +33,10 @@ public:
         
         HeatmapList * heatMaps;
         try {
-            heatMaps = scanNoteMap(getNoteMap(readInMidiFile(getProjectFullPath(PROJECT_JUCER_FILENAME_FLAG) + MIDI_FILE_REL_PATH)));
+            auto midiFile = readInMidiFile(getProjectFullPath(PROJECT_JUCER_FILENAME_FLAG) + MIDI_FILE_REL_PATH);
+            auto noteMap = getNoteMap(midiFile);
+            heatMaps = scanNoteMap(noteMap);
+                                   
         } catch (...) {
             DBG("Problem reading file");
         }
