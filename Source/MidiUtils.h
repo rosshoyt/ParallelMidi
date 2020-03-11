@@ -99,116 +99,101 @@ static NoteMap getNoteMap(MidiFile& midiFile)
 }
 
 /**
- * Utility method that retrieves the notes at a given timestamp from a NoteMap
- * TODO move method to NoteMap class
- */
-static std::list<Note> getNotesAtTimeStamp(double timestamp, const NoteMap& noteMap)
-{
-    //DBG("Getting Notes at timestamp " + std::to_string(timestamp));
-    auto & itr1 = noteMap.lower_bound(timestamp), & itr2 = noteMap.upper_bound(timestamp);
-    std::list<Note> notes;
-    while (itr1 != itr2)
-    {
-        if (itr1->first == timestamp)
-            notes.push_back(itr1->second);
-        itr1++;
-    }
-    DBG("Found " + std::to_string(notes.size()) + " notes");
-    return notes;
-}
-
-/**
  * Creates a NoteHeatMap from a NoteMap.
- * TODO assumes MidiFile doesn't start with a NoteOff
+ * TODO assumes MidiFile doesn't start with a NoteOff and each NoteOn has matching NoteOff
  */
 static HeatmapList * scanNoteMap(NoteMap & inputNoteMap)
 {
-    HeatmapList * noteHeatMap = new HeatmapList();
+    HeatmapList* noteHeatMap = new HeatmapList();
 
+    NoteMap pendingNoteOffMap; // holds noteOffs that will also update or create heatmaps
     int dbgCounter = 1;
-    
-    NoteMap pendingNoteOffMap; // holds noteOffs that will also create heatmaps when they update
-    // go through each note in order by timestamp. can be multiple notes per timestamp
+
+    /* 
+     * Go through each noteOn in order by timestamp. can be multiple notes per timestamp
+     */
     auto & iter = inputNoteMap.begin();
     while (iter != inputNoteMap.end())
     {
-        DBG("------------LOOP #" + std::to_string(dbgCounter) + "-----------");
-        auto timestamp = iter->first; // time off the current noteOn event we're looking at        
+        DBG("------------LOOP #" + std::to_string(dbgCounter++) + "-----------\nPENDING NoteOffs: " + std::to_string(pendingNoteOffMap.size()));
+        // Get time off the current noteOn event we're looking at
+        auto timestamp = iter->first;         
         
-        // Create heatmap for this new timestamp
+        // Initialize the heatmap for the current timestamp
         HeatmapFrame frame(timestamp);
-        
-        // Add all noteOns at the current timestamp into the heatmap
-        // First, get all the noteOns at this timestamp
-        DBG("Getting noteOns at " + std::to_string(timestamp));
-        auto noteOnList = getNotesAtTimeStamp(timestamp, inputNoteMap);
-        for (Note & n : noteOnList)
-        {
-            int midiNoteNumber(n.noteOn.getNoteNumber());
-            DBG("Adding noteOn " + std::to_string(midiNoteNumber) + " - Its noteOff timestamp is " + std::to_string(n.noteOff.getTimeStamp()));
-            frame.addNoteEvent(midiNoteNumber, true);
-            Note offTmp(n);
-            // add the note to noteOffs map by its timestamp, to eventually remove it
-            pendingNoteOffMap.insert( { n.noteOff.getTimeStamp(), offTmp });
-        }
        
-        /* for (; it != iterp   air.second; ++it) {
-            if (it->second == 15) {
-                mymap.erase(it);
-                break;
-            }
-        }*/
-        
-        // Remove any noteOffs that need to be removed at this timestamp
-        // TODO only call getNotesAtTimestamp if not empty key?
-        DBG("Getting all noteOffs at " + std::to_string(timestamp));
-        auto noteOffList = getNotesAtTimeStamp(timestamp, pendingNoteOffMap);
-        for (Note & n : noteOffList)
+        /*
+        * Add all noteOns at the current timestamp into the heatmap
+        */
+        DBG("Getting Notes that Start and End at " + std::to_string(timestamp));
+        while (iter != inputNoteMap.end() && iter->first == timestamp)
         {
-            int midiNoteNumber = n.noteOn.getNoteNumber();
-            DBG("Adding noteOff " + std::to_string(midiNoteNumber) + " at above timestamp");
-            frame.addNoteEvent(midiNoteNumber, false);
+            int midiNoteNumber(iter->second.noteOn.getNoteNumber());
+            DBG("Adding noteOn  " + std::to_string(midiNoteNumber) + " - it ends at " + std::to_string(iter->second.noteOff.getTimeStamp()));
+            frame.addNoteEvent(midiNoteNumber, true);
+            // Copy note to be added to pendingNoteOff mmap.
+            Note off(iter->second);
+            // add the note to noteOffs map by its timestamp, to eventually remove it
+            pendingNoteOffMap.insert({off.noteOff.getTimeStamp(), off });
+            ++iter;
         }
-        pendingNoteOffMap.erase(timestamp);
 
-        // Add heatMapFrame to HeatmapList output list
+        /*
+        * Add any note offs occuring at the current timestamp to the heatmap
+        */
+        auto& offIter = pendingNoteOffMap.begin();
+        while (offIter->first == timestamp)
+        {
+            int midiNoteNumber(offIter->second.noteOn.getNoteNumber());
+            DBG("Adding noteOff " + std::to_string(midiNoteNumber));
+            frame.addNoteEvent(midiNoteNumber, false);
+            offIter++;
+        }
+
+        int numErased = pendingNoteOffMap.erase(timestamp);
+        if(numErased > 0) DBG("Erased " + std::to_string(numErased) + " notes from PendingNoteOffMap");
+        
+        /*
+        * Add the heatMapFrame to HeatmapList 
+        */
         noteHeatMap->push_back(frame);
 
-        /* Advance to next noteOn timestamp */
-        ++iter;
-        if (iter == inputNoteMap.end()) DBG("ITERATOR AT MMAP.END()");
-        double nextNoteOnTimestamp = iter->first;
-        DBG("NextNoteOnTimestamp = " + (timestamp == nextNoteOnTimestamp ? "PREVIOUS TIMESTAMP! ERROR": std::to_string(nextNoteOnTimestamp)));
+        /* 
+        * Now, check if we need to create any additional Heatmap Frames for of any noteOff event timestamps
+        * which happen before the next NoteOn event, or before the end of the song.
+        */
+        // First get the next NoteOn timestamp, or set it to the previous timestamp if we just processed the final note.
+        double nextNoteOnTimestamp = iter == inputNoteMap.end() ? timestamp : iter->first;
         
-        // Check if we need to create heatmaps for the pending note
-        // release timestamps which happen before the next noteOn
-        // TODO BUG FIX - relies on the fact that no noteOff messages come before noteOns in MidiFile
-        auto noteOffIter = pendingNoteOffMap.begin();
-        
-        double noteOffTimestamp = noteOffIter->first;
-        DBG("nextNoteOffTimestamp = " + std::to_string(noteOffTimestamp));
-        while (nextNoteOnTimestamp > noteOffTimestamp || iter == inputNoteMap.end())
+        auto offIter2 = pendingNoteOffMap.begin();
+        double nextNoteOffTimestamp = offIter2->first; // assumes there will at least 1 pending noteOff
+        DBG("NextNoteOffTimestamp = " + std::to_string(nextNoteOffTimestamp));
+        std::list<double> noteOffTimestampsToDelete; // TODO optimize deletion logic (inside loop?)
+        while (nextNoteOnTimestamp > nextNoteOffTimestamp ||
+            iter == inputNoteMap.end() && offIter2 != pendingNoteOffMap.end())
         {
-            // create new heatmap for each unique timestamp for note releases
-            HeatmapFrame newFrame(noteOffTimestamp);
+            // The heatmap frame for this note release timestamp
+            HeatmapFrame newFrame(nextNoteOffTimestamp);
 
+            DBG("Removing noteOffs at " + std::to_string(nextNoteOffTimestamp));
             // remove all notes at timestamp in heatmap
-            DBG("Getting noteOffs at " + std::to_string(noteOffTimestamp) + ", before the nextNoteOnTimestamp");
-            auto notes = getNotesAtTimeStamp(noteOffTimestamp, pendingNoteOffMap);
-            for (Note n : notes)
+            while(offIter2 != pendingNoteOffMap.end() && offIter2->first == nextNoteOffTimestamp)
             {
-                int midiNoteNumber = n.noteOn.getNoteNumber();
-                frame.subtractions.push_back(midiNoteNumber);
+                int midiNoteNumber = offIter2->second.noteOn.getNoteNumber(); // (noteOn/Off should have same note#)
+                frame.addNoteEvent(midiNoteNumber, false);
+                offIter2++;   
             }
-            pendingNoteOffMap.erase(noteOffTimestamp);
-
+            noteOffTimestampsToDelete.push_back(nextNoteOffTimestamp);
+            // Add the frame to the list of frames
             noteHeatMap->push_back(newFrame);
-
-            noteOffTimestamp = noteOffIter->first;
+            if(offIter2 != pendingNoteOffMap.end())
+                nextNoteOffTimestamp = offIter2->first;
         }
-        ++dbgCounter;
+        // remove any timestamps of noteOffs processed
+        int delCount = 0;
+        for (auto ts : noteOffTimestampsToDelete) delCount += pendingNoteOffMap.erase(ts);
+        if(delCount > 0) DBG("Erased " + std::to_string(delCount) + " from PendingNoteOffMap");
     }
-    
     return noteHeatMap;
 }
 
