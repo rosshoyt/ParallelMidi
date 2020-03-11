@@ -27,10 +27,11 @@ public:
     {
         if (!animating)
         {
-            resized();
-            animating = true;
             currentFrame = noteMap->begin();
-            startTime = std::chrono::system_clock::now();
+            resized();
+            startTime = std::chrono::steady_clock::now();
+            animating = true;
+            repaint();
         }      
     }
 
@@ -64,17 +65,16 @@ public:
     }
     
     std::list<HeatmapFrame>::iterator currentFrame, prevFrame;
-    std::chrono::time_point<std::chrono::system_clock> startTime;
+    std::chrono::time_point<std::chrono::steady_clock> startTime;
     double timeElapsed = 0.0;
     void paint (Graphics& g) override
     {
         if (animating) 
         {
-            
-            auto msPassed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - startTime);
-            DBG("MSPassed = " + msPassed.count());
-            if (msPassed.count() >= currentFrame->timestamp)
+            auto sPassed = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - startTime).count() / 100000.0f;
+            if (sPassed >= currentFrame->timestamp)
             {
+                DBG("SPassed = " + std::to_string(sPassed));
 
                 for (auto noteNumber : currentFrame->additions)
                 {
@@ -86,22 +86,21 @@ public:
                     int bucket = noteNumber % 12;
                     colours[bucket] = colours[bucket].darker();
                 }
+
+                if (currentFrame++ == noteMap->end()) animating == false;
             }
             
-            for (int i = 0; i < nDisplayBoxes; ++i)
-            {
-                g.setColour(colours[i]);
-                g.fillRect(rectangles[i]);
-            }
-            ++currentFrame;
-            if (currentFrame == noteMap->end())
-                animating == false;
         }
-        else 
+        for (int i = 0; i < nDisplayBoxes; ++i)
+        {
+            g.setColour(colours[i]);
+            g.fillRect(rectangles[i]);
+        }
+        /*else 
         {
       
             g.drawText("not animating", getBounds(), Justification::centred);
-        }
+        }*/
     }
 
     void resized() override
@@ -123,10 +122,6 @@ private:
     void updateRectanglePositions()
     {
         DBG("Updating Rectangle Positions");
-        
-        
-        
-        
         auto rectTemplate(getBounds());
         int rectWidth = rectTemplate.getWidth() / nDisplayBoxes;
         rectTemplate.setWidth(rectWidth);
@@ -146,8 +141,7 @@ private:
     HeatmapList * noteMap;
     Colour * colours;
     Rectangle<int> * rectangles;
-    //Array<std::pair<Rectangle<int>, Colour>> rectangles;
-    //Array<Rectangle<int>> rectangles;
+   
 
     
 
