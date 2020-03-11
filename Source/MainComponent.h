@@ -14,8 +14,9 @@
 #include "MidiUtils.h"
 #include "NoteMapComponent.h"
 
-const char * MIDI_FILE_REL_PATH = "/source/book1-prelude01.mid";
-const char * PROJECT_JUCER_FILENAME_FLAG = "Final-Project-ParAlgDev.jucer";
+const char* PROJECT_JUCER_FILENAME_FLAG = "Final-Project-ParAlgDev.jucer";
+const char* EXMP_SMF_T0_RPATH = "/source/book1-prelude01.mid";
+const char* EXMP_SMF_T1_RPATH = "/source/ravpavan.mid";
 
 //==============================================================================
 /*
@@ -30,10 +31,11 @@ public:
      */ 
     MainComponent() : noteMapComponent(), startButton("Start"), animationStatus()
     {
-        
         HeatmapList * heatMaps;
         try {
-            auto midiFile = readInMidiFile(getProjectFullPath(PROJECT_JUCER_FILENAME_FLAG) + MIDI_FILE_REL_PATH);
+            auto midiFile = readInMidiFile(
+                getProjectFullPath(PROJECT_JUCER_FILENAME_FLAG) + EXMP_SMF_T1_RPATH
+            );
             auto noteMap = getNoteMap(midiFile);
             heatMaps = scanNoteMap(noteMap);
                                    
@@ -48,6 +50,7 @@ public:
         animationStatus.setFont(Font(16.0f, Font::bold));
         animationStatus.setText("Not Animating", dontSendNotification);
         animationStatus.setColour(Label::textColourId, Colours::lightgreen);
+        animationStatus.setJustificationType(Justification::centred);
         
         addAndMakeVisible(noteMapComponent);
         noteMapComponent.setNoteHeatMap(heatMaps);
@@ -79,6 +82,7 @@ public:
     }
 
 private:
+
     void buttonClicked(Button* b)
     {
         if (b == &startButton)
@@ -93,5 +97,13 @@ private:
     NoteMapComponent noteMapComponent;
     TextButton startButton;
     Label animationStatus;
+
+
+
+
+
+
+
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };

@@ -1,13 +1,12 @@
 /*
  ==============================================================================
- Testing MIDI-Based scan/reduce algorithms
+ Author: Ross Hoyt
+ Testing MIDI-Based scan/reduce algorithms in a Juce GUI environment
  ==============================================================================
  */
 
 #include <JuceHeader.h>
 #include "MainComponent.h"
-
-
 
 //==============================================================================
 class ParallelMidiApplication  : public JUCEApplication
