@@ -4,6 +4,11 @@
               jucerVersion="5.4.7">
   <MAINGROUP id="KTKNKD" name="Final-Project-ParAlgDev">
     <GROUP id="{628D24C3-3131-6140-D798-75281A569364}" name="Source">
+      <GROUP id="{CE73B250-7BAD-2928-8ADD-46D1A87E1E1D}" name="MidiFiles">
+        <FILE id="ZF5w5s" name="ravpavan.mid" compile="0" resource="0" file="Source/ravpavan.mid"/>
+        <FILE id="jtzVih" name="book1-prelude01.mid" compile="0" resource="0"
+              file="../Parallel-Computing-SP2020/final-project/Source/book1-prelude01.mid"/>
+      </GROUP>
       <GROUP id="{6D35071C-B68A-78A3-7CFF-D350341DE648}" name="Utils">
         <FILE id="o7uPn1" name="FileUtils.h" compile="0" resource="0" file="Source/FileUtils.h"/>
         <FILE id="hYrDZI" name="MidiUtils.h" compile="0" resource="0" file="Source/MidiUtils.h"/>
@@ -22,8 +27,6 @@
               file="Source/generalscan_examples.cpp"/>
         <FILE id="VAHStb" name="GeneralScan.h" compile="0" resource="0" file="Source/GeneralScan.h"/>
       </GROUP>
-      <FILE id="jtzVih" name="book1-prelude01.mid" compile="0" resource="0"
-            file="../Parallel-Computing-SP2020/final-project/Source/book1-prelude01.mid"/>
       <FILE id="Jc01LG" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
       <FILE id="njzCvX" name="NoteHistoScan.h" compile="0" resource="0" file="Source/NoteHistoScan.h"/>
     </GROUP>
