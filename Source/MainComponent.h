@@ -22,19 +22,18 @@ const char * PROJECT_JUCER_FILENAME_FLAG = "Final-Project-ParAlgDev.jucer";
 * Main Application Window component.
 * Manages sub-components and executes main program MidiFile Scan logic
 */
-class MainComponent    : public Component
+class MainComponent    : public Component, public Button::Listener
 {
 public:
     /**
      * Constructor which adds child components, intiates settings & runs main application logic
      */ 
-    MainComponent() : noteMapComponent()
+    MainComponent() : noteMapComponent(), startButton("Start"), animationStatus()
     {
         
         HeatmapList * heatMaps;
         try {
             auto midiFile = readInMidiFile(getProjectFullPath(PROJECT_JUCER_FILENAME_FLAG) + MIDI_FILE_REL_PATH);
-
             auto noteMap = getNoteMap(midiFile);
             heatMaps = scanNoteMap(noteMap);
                                    
@@ -42,10 +41,18 @@ public:
             DBG("Problem reading file");
         }
         
+        addAndMakeVisible(startButton);
+        startButton.addListener(this);
+        
+        addAndMakeVisible(animationStatus);
+        animationStatus.setFont(Font(16.0f, Font::bold));
+        animationStatus.setText("Not Animating", dontSendNotification);
+        animationStatus.setColour(Label::textColourId, Colours::lightgreen);
+        
         addAndMakeVisible(noteMapComponent);
-        setSize(600, 400);
         noteMapComponent.setNoteHeatMap(heatMaps);
-        noteMapComponent.animate();
+           
+        setSize(600, 400);
     }
 
     ~MainComponent()
@@ -53,31 +60,38 @@ public:
         
     }
 
+
     void paint (Graphics& g) override
     {
 
-
-        g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));   // clear the background
-
-        g.setColour (Colours::grey);
-        g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
-
-        g.setColour (Colours::white);
-        g.setFont (14.0f);
-        g.drawText ("MainComponent", getLocalBounds(),
-                    Justification::centred, true);   // draw some placeholder text
     }
     /**
      * Method that sets the bounds of child components this component contains.
      */
     void resized() override
     {
-        noteMapComponent.setBounds(getBounds());
+        auto rect = getBounds();
+        auto top = rect.removeFromTop(30);
+        noteMapComponent.setBounds(rect);
+        startButton.setBounds(top.removeFromLeft(top.getWidth() / 2));
+        animationStatus.setBounds(top);
+        
     }
 
 private:
+    void buttonClicked(Button* b)
+    {
+        if (b == &startButton)
+        {
+            DBG("Start Button presed");
+            noteMapComponent.animate();
+            animationStatus.setText(noteMapComponent.isAnimating() ? "Animating!" : "Not Animating", dontSendNotification);
+
+        }
+    } 
 
     NoteMapComponent noteMapComponent;
-
+    TextButton startButton;
+    Label animationStatus;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };

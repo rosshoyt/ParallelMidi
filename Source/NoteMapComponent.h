@@ -23,24 +23,38 @@ class NoteMapComponent    : public Component
 {
 public:
 
-    bool animate() {
-        if (noteMap != nullptr)
+    void animate() 
+    {
+        if (!animating)
         {
-            currentFrame = noteMap->begin();
-            prevFrame = currentFrame;
+            resized();
             animating = true;
-            return animating;
-        }
-        else return animating;
+            currentFrame = noteMap->begin();
+            startTime = std::chrono::system_clock::now();
+        }      
     }
 
-    NoteMapComponent() : rectangles(), animating(false)
+    bool isAnimating()
     {
+        return animating;
+    }
+
+    NoteMapComponent() //: rectangles()
+    {
+        animating = false;
         noteMap = nullptr;
-        
+        nDisplayBoxes = 12;
+       
+
         colours = new Colour[nDisplayBoxes];
+        rectangles = new Rectangle<int>[nDisplayBoxes];
         for (int i = 0; i < nDisplayBoxes; ++i)
+        {
+            //rectangles[i];
             colours[i] = Colours::darkblue;
+        
+        }
+        updateRectanglePositions();
         
     }
 
@@ -56,11 +70,9 @@ public:
     {
         if (animating) 
         {
-            // initialize startTime
-            if(timeElapsed == 0.0) startTime = std::chrono::system_clock::now();
             
-            auto msPassed = std::chrono::system_clock::now() - startTime;
-
+            auto msPassed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - startTime);
+            DBG("MSPassed = " + msPassed.count());
             if (msPassed.count() >= currentFrame->timestamp)
             {
 
@@ -75,12 +87,15 @@ public:
                     colours[bucket] = colours[bucket].darker();
                 }
             }
-    
-            for (int i = 0; i < rectangles.size(); ++i)
+            
+            for (int i = 0; i < nDisplayBoxes; ++i)
             {
                 g.setColour(colours[i]);
                 g.fillRect(rectangles[i]);
             }
+            ++currentFrame;
+            if (currentFrame == noteMap->end())
+                animating == false;
         }
         else 
         {
@@ -91,32 +106,48 @@ public:
 
     void resized() override
     {
-        // This method is where you should set the bounds of any child
-        // components that your component contains..
-        int count = 0;
-        int rectWidth = getWidth() / nDisplayBoxes;
-
-        for (int i = 0; i < rectangles.size(); ++i)
-            rectangles[i].setBounds(count * rectWidth, 0, rectWidth, getHeight());
+        updateRectanglePositions();
+        
     }
     
 
-    void setNoteHeatMap(HeatmapList *noteMap) 
+    void setNoteHeatMap(HeatmapList *heatmapList) 
     {
-        this->noteMap = noteMap;
+        this->noteMap = heatmapList;
+        DBG("Set NoteHeatMap List. Frames to animate: " + std::to_string(noteMap->size()));
         //findMostHits(); // TODO implement findMostHits using reduction or other parallel technique
     }
     //void findMostHits();
 private:
     //int maxHits; //TODO 
+    void updateRectanglePositions()
+    {
+        DBG("Updating Rectangle Positions");
+        
+        
+        
+        
+        auto rectTemplate(getBounds());
+        int rectWidth = rectTemplate.getWidth() / nDisplayBoxes;
+        rectTemplate.setWidth(rectWidth);
+        for (int i = 0; i < nDisplayBoxes; ++i)
+        {
+            //auto rectBounds = bounds.removeFromLeft(width);
 
+            rectangles[i].setBounds(i * rectWidth, rectTemplate.getY(), rectTemplate.getWidth(), rectTemplate.getHeight());
+            //auto thisRect = rectangles[i];
+            //DBG(thisRect.get)
+        }
+    }
+    
     bool animating;
     double playbackRate = 5.0;
-    int nDisplayBoxes = 12;
+    int nDisplayBoxes;
     HeatmapList * noteMap;
     Colour * colours;
+    Rectangle<int> * rectangles;
     //Array<std::pair<Rectangle<int>, Colour>> rectangles;
-    Array<Rectangle<int>, CriticalSection, 12> rectangles;
+    //Array<Rectangle<int>> rectangles;
 
     
 

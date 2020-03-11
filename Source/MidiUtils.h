@@ -141,7 +141,7 @@ static HeatmapList * scanNoteMap(NoteMap & inputNoteMap)
         /*
         * Add any note offs occuring at the current timestamp to the heatmap
         */
-        auto& offIter = pendingNoteOffMap.begin();
+        auto & offIter = pendingNoteOffMap.begin();
         while (offIter->first == timestamp)
         {
             int midiNoteNumber(offIter->second.noteOn.getNoteNumber());
@@ -162,13 +162,14 @@ static HeatmapList * scanNoteMap(NoteMap & inputNoteMap)
         * Now, check if we need to create any additional Heatmap Frames for of any noteOff event timestamps
         * which happen before the next NoteOn event, or before the end of the song.
         */
+        
         // First get the next NoteOn timestamp, or set it to the previous timestamp if we just processed the final note.
         double nextNoteOnTimestamp = iter == inputNoteMap.end() ? timestamp : iter->first;
         
         auto offIter2 = pendingNoteOffMap.begin();
-        double nextNoteOffTimestamp = offIter2->first; // assumes there will at least 1 pending noteOff
+        auto nextNoteOffTimestamp = offIter2->first; // assumes there will at least 1 pending noteOff
         DBG("NextNoteOffTimestamp = " + std::to_string(nextNoteOffTimestamp));
-        std::list<double> noteOffTimestampsToDelete; // TODO optimize deletion logic (inside loop?)
+        std::list<double> noteOffTimestampsToDelete; // TODO optimize deletion logic (-> inside loop?)
         while (nextNoteOnTimestamp > nextNoteOffTimestamp ||
             iter == inputNoteMap.end() && offIter2 != pendingNoteOffMap.end())
         {
@@ -189,7 +190,7 @@ static HeatmapList * scanNoteMap(NoteMap & inputNoteMap)
             if(offIter2 != pendingNoteOffMap.end())
                 nextNoteOffTimestamp = offIter2->first;
         }
-        // remove any timestamps of noteOffs processed
+        // remove all noteOffs processed from pendingNoteOffs map
         int delCount = 0;
         for (auto ts : noteOffTimestampsToDelete) delCount += pendingNoteOffMap.erase(ts);
         if(delCount > 0) DBG("Erased " + std::to_string(delCount) + " from PendingNoteOffMap");
