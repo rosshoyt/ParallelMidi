@@ -21,9 +21,13 @@
 static const int NUM_MIDI_NOTES = 128;
 static const int NUM_NOTES_OCTAVE = 12;
 
+typedef double Timestamp;
+
 // the raw data components of the scan
 typedef MidiMessage NoteOn;
 typedef MidiMessage NoteOff;
+
+
 
 // A note is made up of a noteOn and its corresponding noteOff..
 // Assumes complete midi file with matching noteOns/noteOffs
@@ -104,13 +108,15 @@ static NoteMap getNoteMap(MidiFile& midiFile)
  */
 static HeatmapList * scanNoteMap(NoteMap & inputNoteMap)
 {
-    HeatmapList* noteHeatMap = new HeatmapList();
+    HeatmapList * noteHeatMap = new HeatmapList();
 
     NoteMap pendingNoteOffMap; // holds noteOffs that will also update or create heatmaps
+    
     int dbgCounter = 1;
 
     /* 
-     * Go through each noteOn in order by timestamp. can be multiple notes per timestamp
+     * Iterate through each noteOn in by timestamp key (chronological order)
+     * Can be multiple notes per timestamp key
      */
     auto & iter = inputNoteMap.begin();
     while (iter != inputNoteMap.end())
@@ -137,7 +143,6 @@ static HeatmapList * scanNoteMap(NoteMap & inputNoteMap)
             pendingNoteOffMap.insert({off.noteOff.getTimeStamp(), off });
             ++iter;
         }
-
         /*
         * Add any note offs occuring at the current timestamp to the heatmap
         */
@@ -162,33 +167,32 @@ static HeatmapList * scanNoteMap(NoteMap & inputNoteMap)
         * Now, check if we need to create any additional Heatmap Frames for of any noteOff event timestamps
         * which happen before the next NoteOn event, or before the end of the song.
         */
-        
-        // First get the next NoteOn timestamp, or set it to the previous timestamp if we just processed the final note.
+        // Get the next NoteOn timestamp, or set it to the previous timestamp if we just processed the final note.
         double nextNoteOnTimestamp = iter == inputNoteMap.end() ? timestamp : iter->first;
-        
-        auto offIter2 = pendingNoteOffMap.begin();
-        auto nextNoteOffTimestamp = offIter2->first; // assumes there will at least 1 pending noteOff
+        // Get next pending NoteOff (assumes there will at least 1 pending noteOff after noteOn triggered)
+        offIter = pendingNoteOffMap.begin();
+        auto nextNoteOffTimestamp = offIter->first; 
         DBG("NextNoteOffTimestamp = " + std::to_string(nextNoteOffTimestamp));
-        std::list<double> noteOffTimestampsToDelete; // TODO optimize deletion logic (-> inside loop?)
-        while (nextNoteOnTimestamp > nextNoteOffTimestamp ||
-            iter == inputNoteMap.end() && offIter2 != pendingNoteOffMap.end())
+        // TODO optimize deletion logic to be inside loop. Need to increment iterator after deleting?
+        std::list<double> noteOffTimestampsToDelete; 
+        while (nextNoteOnTimestamp > nextNoteOffTimestamp || iter == inputNoteMap.end() && offIter != pendingNoteOffMap.end())
         {
             // The heatmap frame for this note release timestamp
             HeatmapFrame newFrame(nextNoteOffTimestamp);
 
             DBG("Removing noteOffs at " + std::to_string(nextNoteOffTimestamp));
             // remove all notes at timestamp in heatmap
-            while(offIter2 != pendingNoteOffMap.end() && offIter2->first == nextNoteOffTimestamp)
+            while(offIter != pendingNoteOffMap.end() && offIter->first == nextNoteOffTimestamp)
             {
-                int midiNoteNumber = offIter2->second.noteOn.getNoteNumber(); // (noteOn/Off should have same note#)
+                int midiNoteNumber = offIter->second.noteOn.getNoteNumber(); // (noteOn/Off should have same note#)
                 frame.addNoteEvent(midiNoteNumber, false);
-                offIter2++;   
+                offIter++;   
             }
             noteOffTimestampsToDelete.push_back(nextNoteOffTimestamp);
             // Add the frame to the list of frames
             noteHeatMap->push_back(newFrame);
-            if(offIter2 != pendingNoteOffMap.end())
-                nextNoteOffTimestamp = offIter2->first;
+            if(offIter != pendingNoteOffMap.end())
+                nextNoteOffTimestamp = offIter->first;
         }
         // remove all noteOffs processed from pendingNoteOffs map
         int delCount = 0;

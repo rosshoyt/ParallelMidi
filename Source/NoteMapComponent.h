@@ -18,8 +18,9 @@
 
 //==============================================================================
 /*
+* Note Heatmap Visualization Class
 */
-class NoteMapComponent    : public Component
+class NoteMapComponent  : public Component
 {
 public:
 
@@ -74,7 +75,7 @@ public:
             auto sPassed = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - startTime).count() / 100000.0f;
             if (sPassed >= currentFrame->timestamp)
             {
-                DBG("SPassed = " + std::to_string(sPassed));
+                //DBG("SPassed = " + std::to_string(sPassed));
 
                 for (auto noteNumber : currentFrame->additions)
                 {
@@ -86,7 +87,7 @@ public:
                     int bucket = noteNumber % 12;
                     colours[bucket] = colours[bucket].darker();
                 }
-
+                
                 if (currentFrame++ == noteMap->end()) animating == false;
             }
             
@@ -96,11 +97,6 @@ public:
             g.setColour(colours[i]);
             g.fillRect(rectangles[i]);
         }
-        /*else 
-        {
-      
-            g.drawText("not animating", getBounds(), Justification::centred);
-        }*/
     }
 
     void resized() override

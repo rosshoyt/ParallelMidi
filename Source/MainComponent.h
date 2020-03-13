@@ -14,9 +14,9 @@
 #include "MidiUtils.h"
 #include "NoteMapComponent.h"
 
-const char* PROJECT_JUCER_FILENAME_FLAG = "Final-Project-ParAlgDev.jucer";
-const char* EXMP_SMF_T0_RPATH = "/source/book1-prelude01.mid";
-const char* EXMP_SMF_T1_RPATH = "/source/ravpavan.mid";
+const char * PROJECT_JUCER_FILENAME_FLAG = "Final-Project-ParAlgDev.jucer";
+const char * EXMP_SMF_T0_RPATH =           "/source/book1-prelude01.mid";
+const char * EXMP_SMF_T1_RPATH =           "/source/ravpavan.mid";
 
 //==============================================================================
 /*
@@ -34,7 +34,7 @@ public:
         HeatmapList * heatMaps;
         try {
             auto midiFile = readInMidiFile(
-                getProjectFullPath(PROJECT_JUCER_FILENAME_FLAG) + EXMP_SMF_T1_RPATH
+                getProjectFullPath(PROJECT_JUCER_FILENAME_FLAG) + EXMP_SMF_T0_RPATH
             );
             auto noteMap = getNoteMap(midiFile);
             heatMaps = scanNoteMap(noteMap);
